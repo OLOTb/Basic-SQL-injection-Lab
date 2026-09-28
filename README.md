@@ -54,4 +54,4 @@ Testez le même payload `' OR '1'='1`. L'attaque va cette fois échouer.
 ## Identifiants de test
 Pour tester le comportement normal de l'application (sans injection), vous pouvez utiliser le compte généré par défaut :
 - **Username :** `admin`
-- **Password :** `password!`
+- **Password :** `password`
