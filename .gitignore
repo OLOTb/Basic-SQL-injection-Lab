@@ -1,0 +1,14 @@
+# Environnement virtuel
+venv/
+
+# Base de données locale
+*.db
+database.db
+
+# Dossiers de configuration de l'éditeur
+.vs/
+.vscode/
+
+# Fichiers temporaires Python
+__pycache__/
+*.pyc

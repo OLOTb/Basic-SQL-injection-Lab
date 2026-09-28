@@ -1,0 +1,55 @@
+from flask import Flask, request, render_template_string
+import sqlite3
+
+app = Flask(__name__)
+
+HTML_TEMPLATE = """
+<div style="text-align:center; margin-top:15%;">
+    <h2>Login (Secured Version)</h2>
+    <form method="POST">
+        Username: <input type="text" name="username"><br><br>
+        Password: <input type="password" name="password"><br><br>
+        <input type="submit" value="Login">
+    </form>
+    <p style="color:{{ msg_color }}"><b>{{ message }}</b></p>
+    </div>
+"""
+
+@app.route('/', methods=['GET', 'POST'])
+def login():
+    message = ""
+    msg_color = "black"
+
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+    
+        conn = sqlite3.connect('database.db')
+        conn.row_factory = sqlite3.Row
+        cursor = conn.cursor()
+    
+        # THE FIX: Parameterized query using '?'
+        query = "SELECT * FROM users WHERE username = ? AND password = ?"
+    
+        try:
+            # Data is sent separately from the query
+            cursor.execute(query, (username, password))
+            user = cursor.fetchone()
+        
+            if user:
+                message = f"Success: Logged in legitimately as: {user['username']}"
+                msg_color = "green"
+            else:
+                message = "Error: Invalid credentials or SQL injection blocked."
+                msg_color = "red"
+        except sqlite3.Error as e:
+            message = f"SQL Error: {e}"
+            msg_color = "red"
+        
+        conn.close()
+    
+    return render_template_string(HTML_TEMPLATE, message=message, msg_color=msg_color)
+
+if __name__ == '__main__':
+    print("SECURED App running on http://127.0.0.1:5000")
+    app.run(debug=True, port=5000)
